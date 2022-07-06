@@ -2,17 +2,25 @@
 Parse a SCIP log file and returns statistics
 @author A. Mélissa, B. Liang, E. Vercesi, A. Zhang
 '''
-
+import gzip
 import re
 
-# TODO add more comments, documentation is missing
 class Log:
     def __init__(self, path):
         self.path = path
 
     def vectorise(self):
-        with open(self.path) as F:
-            return F.readlines()
+        '''
+        Vectorize both a .log.gz or a .log file
+        :return: list of lines of the log file
+        '''
+        if ".gz" in self.path[-3:]:
+            F =  gzip.open(self.path, 'rt')
+        else:
+            F = open(self.path, 'r')
+        lines = F.readlines()
+        F.close()
+        return lines
 
     def get_primal_dual_integral(self):
         lines = self.vectorise()
@@ -68,5 +76,7 @@ class Log:
 
 if __name__ == "__main__":
     # Testing section
-    path = "item_placement_1064.mps.gz.log"
-    l = Log(path).parse()
+    #path = "./logs_example/item_placement_0.mps.gz.log"
+    path = "./logs_example/item_placement_908.log.gz"
+    l = Log(path)
+    features = l.parse()

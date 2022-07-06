@@ -37,12 +37,16 @@ class Log:
         return float(time)
 
     def get_primal_bound(self):
-        # TODO @Annie
-        return 0
+        lines = self.vectorise()
+        line = filter(lambda x: "Primal Bound       " in x, lines)
+        primal_bound = next(line).split(":")[1].split("(")[0].strip()
+        return float(primal_bound)
 
     def get_dual_bound(self):
-        # TODO @Annie
-        return 0
+        lines = self.vectorise()
+        line = filter(lambda x: "Dual Bound         " in x, lines)
+        dual_bound = next(line).split(":")[1].strip()
+        return float(dual_bound)
 
     def get_number_of_bb_nodes(self):
         lines = self.vectorise()
@@ -56,11 +60,13 @@ class Log:
             "Primal-Dual Integral Percentage": self.get_primal_dual_integral()[1],
             "Gap": self.get_gap(),
             "Time First Feasible": self.get_running_time_first_feasible(),
+            "Primal Bound": self.get_primal_bound(),
+            "Dual Bound": self.get_dual_bound(),
             "B&B Tree nodes": self.get_number_of_bb_nodes()
         }
 
 
 if __name__ == "__main__":
     # Testing section
-    path = "logs/item_placement_1064.mps.gz.log"
+    path = "item_placement_1064.mps.gz.log"
     l = Log(path).parse()

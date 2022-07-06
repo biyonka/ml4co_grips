@@ -5,9 +5,11 @@ channels:
 dependencies:
   - python=3.8
   - scip=7.0.3
+  - swig=4.0.2
   - numpy
   - scipy
   - pip
   - pip:
     - hyperopt
     - scikit-learn
+    - smac

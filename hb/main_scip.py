@@ -16,7 +16,6 @@ except IndexError:
 
 print("Will save results to", output_file)
 
-#
 
 hb = Hyperband(get_params, try_params)
 results = hb.run(skip_last=0)

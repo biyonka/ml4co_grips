@@ -12,7 +12,7 @@ from sklearn.metrics import mean_squared_error as MSE #mean_absolute_error as MA
 from hyperopt import hp
 from hyperopt.pyll.stochastic import sample
 
-from Log import *
+from utils import *
 import os
 import subprocess
 

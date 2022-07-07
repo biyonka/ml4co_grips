@@ -4,6 +4,7 @@ Parse a SCIP log file and returns statistics
 '''
 import gzip
 import re
+import subprocess
 
 class Log:
     def __init__(self, path):
@@ -73,6 +74,37 @@ class Log:
             "B&B Tree nodes": self.get_number_of_bb_nodes()
         }
 
+class SCIP:
+    def __init__(self):
+        pass
+
+    def write_parameter_file(self, D, filename="scip.set", timelimit=-1):
+        '''
+        Method from writing parameter file from a dictionary
+        :param D: dict, keys: SCIP parameters, values : va
+        :param filename: str, name of the parameter file
+        :param timelimit: set a timelimit; default: no timelimit = -1
+        :param seed : set gloab seed
+        :param compress_log: set True if you want a compressed log; useful for big files
+        :param q: set to true if you want the output to not appear on the sdout
+        '''
+        F = open(filename, "w+")
+        for param in D.keys():
+            F.write(param + "=" + D[param] + "\n")
+        if timelimit > 0:
+            F.write("limits/time={}".format(timelimit))
+        F.close()
+
+    def run(self, path, logfile="logfile.log", parameter_configuration="scip.set", seed=42, compress_log=True, q=True):
+        subprocess.run(
+            "scip -l {} {} -s {} {} -f {}".format(
+                logfile, "-q" if q else "", parameter_configuration, "-r " + str(seed) if seed > 0 else "", path
+            ),
+        shell = True)
+        if compress_log:
+            subprocess.run("gzip {}".format(logfile), shell=True)
+
+
 
 if __name__ == "__main__":
     # Testing section
@@ -80,3 +112,4 @@ if __name__ == "__main__":
     path = "./logs_example/item_placement_908.log.gz"
     l = Log(path)
     features = l.parse()
+    SCIP().run("hb/instances/item_placement_0.mps.gz", parameter_configuration="scip.set", q=False)

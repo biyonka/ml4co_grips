@@ -90,7 +90,7 @@ class SCIP:
         '''
         F = open(filename, "w+")
         for param in D.keys():
-            F.write(param + "=" + D[param] + "\n")
+            F.write(param + "=" + str(D[param]) + "\n")
         if timelimit > 0:
             F.write("limits/time={}".format(timelimit))
         F.close()
@@ -102,7 +102,7 @@ class SCIP:
             ),
         shell = True)
         if compress_log:
-            subprocess.run("gzip {}".format(logfile), shell=True)
+            subprocess.run("gzip --force {}".format(logfile), shell=True)
 
 
 

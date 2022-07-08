@@ -5,6 +5,7 @@ Parse a SCIP log file and returns statistics
 import gzip
 import re
 import subprocess
+from smac import configspace
 
 class Log:
     def __init__(self, path):
@@ -103,6 +104,31 @@ class SCIP:
         shell = True)
         if compress_log:
             subprocess.run("gzip --force {}".format(logfile), shell=True)
+
+
+def run_SCIP_with_smac(config, budget, instance, seed=42):
+
+    '''
+
+    # Method to define SCIP as TAE (target algorithm evaluator) ie model for SMAC
+    :param config: configuration type object,
+    :param budget: timelimit
+    :param instance:
+    :param seed:
+    :return: primal dual integral percentage to be minimized by SMAC
+
+    '''
+
+    scip = SCIP()
+    # Trying to generate the config with a sample
+    sample_cfgs = configspace.sample_configuration()  # this creates a configuration type object
+    sample_cfgs_dict = {k: sample_cfgs[k] for k in sample_cfgs}  # you can turn this object into a dictionary
+
+    scip.write_parameter_file(sample_cfgs_dict, filename=instance+"_SMAC.set", timelimit=10)
+    scip.run(instance, logfile=instance + ".log", parameter_configuration="{}_SMAC.set".format(instance), seed=seed, q=False)
+    l = Log(instance + ".log.gz").parse()
+    return l["Primal-Dual Integral Percentage"]
+
 
 
 

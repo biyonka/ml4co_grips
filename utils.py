@@ -5,7 +5,6 @@ Parse a SCIP log file and returns statistics
 import gzip
 import re
 import subprocess
-from SMAC.scenario import configspace
 
 
 class Log:
@@ -108,7 +107,7 @@ class SCIP:
 
 
 def run_SCIP_with_smac(config, budget, instance, seed=42):
-
+    from SMAC.scenario import configspace
     '''
 
     # Method to define SCIP as TAE (target algorithm evaluator) ie model for SMAC
@@ -130,12 +129,3 @@ def run_SCIP_with_smac(config, budget, instance, seed=42):
     scip.run(instance, logfile=instance + ".log", parameter_configuration="{}_SMAC.set".format(instance), seed=seed, q=False)
     l = Log(instance + ".log.gz").parse()
     return l["Primal-Dual Integral Percentage"]
-
-
-if __name__ == "__main__":
-    # Testing section
-    #path = "./logs_example/item_placement_0.mps.gz.log"
-    path = "./logs_example/item_placement_908.log.gz"
-    l = Log(path)
-    features = l.parse()
-    SCIP().run("hb/instances/item_placement_0.mps.gz", parameter_configuration="scip.set", q=False)

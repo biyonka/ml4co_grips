@@ -56,8 +56,8 @@ def try_params(resource, params):
     pprint(params)
     
     #run SCIP on instances to get list of performance measures (one per instance)
-    scip_pd_perc = run_and_eval_scip(params, list_of_instances, feature="Primal-Dual Integral Percentage")
+    scip_gap = run_and_eval_scip(params, list_of_instances, feature="Gap")
     scip_pd_val = run_and_eval_scip(params, list_of_instances, feature="Primal-Dual Integral Value")
-    optimizing_stat = gmean(scip_pd_perc)
+    optimizing_stat = gmean(scip_gap)
     pd_val = gmean(scip_pd_val)
-    return {'loss': optimizing_stat, 'PDIntVal':  pd_val, 'PDPerc': optimizing_stat} 
+    return {'loss': optimizing_stat, 'PDIntVal':  pd_val, 'Gap': optimizing_stat}

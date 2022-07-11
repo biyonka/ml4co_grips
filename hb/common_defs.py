@@ -2,15 +2,10 @@
 
 import numpy as np
 
-from math import log, sqrt
-from time import time
-from pprint import pprint
+from math import sqrt
 
 from sklearn.metrics import roc_auc_score as AUC, log_loss, accuracy_score as accuracy
 from sklearn.metrics import mean_squared_error as MSE #mean_absolute_error as MAE
-
-from hyperopt import hp
-from hyperopt.pyll.stochastic import sample
 
 from utils import *
 import os

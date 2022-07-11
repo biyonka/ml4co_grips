@@ -130,9 +130,11 @@ def run_SCIP_with_smac(config, budget, instance, seed=42):
     return l["Primal-Dual Integral Percentage"]
 
 
+if __name__ == "__main__":
     # Testing section
+    pass
     #path = "./logs_example/item_placement_0.mps.gz.log"
-    path = "./logs_example/item_placement_908.log.gz"
-    l = Log(path)
-    features = l.parse()
-    SCIP().run("hb/instances/item_placement_0.mps.gz", parameter_configuration="scip.set", q=False)
+    #path = "./logs_example/item_placement_908.log.gz"
+    #l = Log(path)
+    #features = l.parse()
+    #SCIP().run("hb/instances/item_placement_0.mps.gz", parameter_configuration="scip.set", q=False)

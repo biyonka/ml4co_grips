@@ -3,14 +3,22 @@
 import numpy as np
 
 from math import sqrt
+from time import time
+from pprint import pprint
 
 from sklearn.metrics import roc_auc_score as AUC, log_loss, accuracy_score as accuracy
 from sklearn.metrics import mean_squared_error as MSE #mean_absolute_error as MAE
 
-from utils import *
+from hyperopt import hp
+from hyperopt.pyll.stochastic import sample
 import os
+import sys
+import inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
+import utils
 import subprocess
-
 # handle floats which should be integers
 # works with flat params
 def handle_integers( params ):
@@ -113,7 +121,7 @@ def run_and_eval_scip(config, list_of_instances, feature="Primal-Dual Integral P
 		# Run SCIP with the desired setting of parameters and a file as a log
 		subprocess.run("scip -f {} -l {} -s scip_temp.set -q".format(file, file + ".log"), shell=True)
 		# Retrieve the info on the SCIP run
-		scores = Log(file + ".log").parse()
+		scores = utils.Log(file + ".log").parse()
 		# append the score on the list out
 		out.append(scores[feature])
 		# Remove no more useful file

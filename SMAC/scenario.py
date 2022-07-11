@@ -8,7 +8,7 @@ hyperparams=[
 CSH.CategoricalHyperparameter('branching/scorefunc', ['s', 'p', 'q'],default_value='q'),
 CSH.UniformFloatHyperparameter('branching/scorefac', 0, 1,default_value=0.167),
 CSH.CategoricalHyperparameter('branching/preferbinary', [True, False],default_value=False),
-CSH.UniformFloatHyperparameter('branching/clamps', 0, 0.5,default_value=0.2),
+CSH.UniformFloatHyperparameter('branching/clamp', 0, 0.5,default_value=0.2),
 CSH.UniformFloatHyperparameter('branching/midpull', 0, 1,default_value=0.75),
 CSH.UniformFloatHyperparameter('branching/midpullreldomtrig', 0, 1,default_value=0.5),
 CSH.CategoricalHyperparameter('branching/lpgainnormalize', ['d','l','s'],default_value='s'),
@@ -39,6 +39,7 @@ scenario = Scenario({
     "run_obj": "quality",  # Optimize quality (alternatively runtime)
     "runcount-limit": 10,  # Max number of function evaluations (the more the better)
     "cs": configspace,
-    "train_inst_fn" : "instance_path",
+    "train_inst_fn" : "instance_path_train.txt",
+    "test_inst_fn": "instance_path_test.txt",
     "algo_runs_timelimit" : 60
 })

@@ -127,3 +127,19 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# .pkl files
+*.pkl
+
+# data files
+*.mps.gz
+*.mps.gz.log
+*.json
+*.set
+
+# .DS Store
+*.DS_Store
+
+#instances folder
+hb/instances/
+SMAC/instances/

@@ -3,14 +3,17 @@
 
 from common_defs import *
 from scipy.stats import gmean
+import pandas as pd
 
+#list_of_instances = [
+ #   "./instances/item_placement_0.mps.gz",
+ #  "./instances/item_placement_1.mps.gz",
+ #   "./instances/item_placement_2.mps.gz",
+  #  "./instances/item_placement_3.mps.gz"
+  #  ]
 
-list_of_instances = [
-    "./instances/item_placement_0.mps.gz",
-   "./instances/item_placement_1.mps.gz",
-    "./instances/item_placement_2.mps.gz",
-    "./instances/item_placement_3.mps.gz"
-    ]
+#read txt file of training instances from stratified sampling
+list_of_instances = list(pd.read_csv('1_instance_path_train_with_classes.txt').iloc[:,0])
 
 #define configuration space
 #http://hyperopt.github.io/hyperopt/getting-started/search_spaces/
@@ -56,8 +59,8 @@ def try_params(resource, params):
     pprint(params)
     
     #run SCIP on instances to get list of performance measures (one per instance)
-    scip_gap = run_and_eval_scip(params, list_of_instances, feature="Gap")
+    scip_gap = run_and_eval_scip(params, list_of_instances, feature="Primal Dual Integral Percentage")
     scip_pd_val = run_and_eval_scip(params, list_of_instances, feature="Primal-Dual Integral Value")
     optimizing_stat = gmean(scip_gap)
     pd_val = gmean(scip_pd_val)
-    return {'loss': optimizing_stat, 'PDIntVal':  pd_val, 'Gap': optimizing_stat}
+    return {'loss': optimizing_stat, 'PDIntVal':  pd_val, 'PDIntPerc': optimizing_stat}

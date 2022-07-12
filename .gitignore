@@ -131,7 +131,13 @@ dmypy.json
 # .pkl files
 *.pkl
 
+# data files
+*.mps.gz
+*.mps.gz.log
+*.json
+*.set
+
+
 #instances folder
 hb/instances/
 SMAC/instances/
-instances/

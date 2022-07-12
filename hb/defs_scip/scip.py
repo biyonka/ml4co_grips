@@ -13,7 +13,7 @@ import pandas as pd
   #  ]
 
 #read txt file of training instances from stratified sampling
-list_of_instances = list(pd.read_csv('instance_path_train_with_classes.txt').iloc[:,0])
+list_of_instances = list(pd.read_csv('1_instance_path_train_with_classes.txt').iloc[:,0])
 
 #define configuration space
 #http://hyperopt.github.io/hyperopt/getting-started/search_spaces/

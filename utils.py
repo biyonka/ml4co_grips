@@ -118,13 +118,18 @@ def run_SCIP_with_smac(config, budget, instance, seed=42):
     :return: primal dual integral percentage to be minimized by SMAC
 
     '''
-    from SMAC.scenario import configspace
+    from SMAC.scenario import SMACscenario
+
+    smacscenario = SMACscenario()
+    smacscenario.set_configSpace()
+    configspace = smacscenario.get_configSpace()
     scip = SCIP()
+
     # Trying to generate the config with a sample
     sample_cfgs =configspace.sample_configuration()  # this creates a configuration type object
     sample_cfgs_dict = {k: sample_cfgs[k] for k in sample_cfgs}  # you can turn this object into a dictionary
 
-    scip.write_parameter_file(sample_cfgs_dict, filename=instance+"_SMAC.set", timelimit=10)
+    scip.write_parameter_file(sample_cfgs_dict, filename=instance+"_SMAC.set", timelimit=180)
     scip.run(instance, logfile=instance + ".log", parameter_configuration="{}_SMAC.set".format(instance), seed=seed, q=False)
     l = Log(instance + ".log.gz").parse()
     return l["Primal-Dual Integral Percentage"]

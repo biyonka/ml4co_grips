@@ -137,6 +137,8 @@ dmypy.json
 *.json
 *.set
 
+# .DS Store
+*.DS_Store
 
 #instances folder
 hb/instances/

@@ -133,4 +133,5 @@ dmypy.json
 
 #instances folder
 hb/instances/
+SMAC/instances/
 instances/

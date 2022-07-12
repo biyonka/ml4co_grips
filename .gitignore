@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# .pkl files
+.pkl
+
+#instances folder
+hb/instances/

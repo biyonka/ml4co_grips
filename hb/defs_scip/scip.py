@@ -13,7 +13,7 @@ import pandas as pd
   #  ]
 
 #read txt file of training instances from stratified sampling
-list_of_instances = list(pd.read_csv('1_instance_path_train_with_classes.txt').iloc[:,0])
+list_of_instances = list(pd.read_csv('1_instances_path_train_with_classes.txt').iloc[:,0])
 
 #define configuration space
 #http://hyperopt.github.io/hyperopt/getting-started/search_spaces/
@@ -59,7 +59,7 @@ def try_params(resource, params):
     pprint(params)
     
     #run SCIP on instances to get list of performance measures (one per instance)
-    scip_gap = run_and_eval_scip(params, list_of_instances, feature="Primal Dual Integral Percentage")
+    scip_gap = run_and_eval_scip(params, list_of_instances, feature="Primal-Dual Integral Percentage")
     scip_pd_val = run_and_eval_scip(params, list_of_instances, feature="Primal-Dual Integral Value")
     optimizing_stat = gmean(scip_gap)
     pd_val = gmean(scip_pd_val)

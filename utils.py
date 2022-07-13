@@ -63,6 +63,12 @@ class Log:
         line = filter(lambda x: "nodes            " in x, lines)
         bb_nodes = next(line).split(":")[1].split("(")[0]
         return int(bb_nodes)
+    
+    def get_root_node_solving_time(self):
+        lines = self.vectorise()
+        line = filter(lambda x: "First LP Time" in x, lines)
+        root_node_time = next(line).split(":")[-1].strip()
+        return float(root_node_time)
 
     def parse(self):
         return {
@@ -72,7 +78,8 @@ class Log:
             "Time First Feasible": self.get_running_time_first_feasible(),
             "Primal Bound": self.get_primal_bound(),
             "Dual Bound": self.get_dual_bound(),
-            "B&B Tree nodes": self.get_number_of_bb_nodes()
+            "B&B Tree nodes": self.get_number_of_bb_nodes(),
+            "Time to Solve Root Node": self.get_root_node_solving_time()
         }
 
 class SCIP:

@@ -69,6 +69,12 @@ class Log:
         line = filter(lambda x: "First LP Time" in x, lines)
         root_node_time = next(line).split(":")[-1].strip()
         return float(root_node_time)
+    
+    def get_LP_iter_freq(self):
+        lines = self.vectorise()
+        line = filter(lambda x: "dual LP" in x, lines)
+        freq = next(line).split(":")[1].split()[2]
+        return int(freq)
 
     def parse(self):
         return {
@@ -79,7 +85,8 @@ class Log:
             "Primal Bound": self.get_primal_bound(),
             "Dual Bound": self.get_dual_bound(),
             "B&B Tree nodes": self.get_number_of_bb_nodes(),
-            "Time to Solve Root Node": self.get_root_node_solving_time()
+            "Time to Solve Root Node": self.get_root_node_solving_time(),
+            "Number of LP Iterations": self.get_LP_iter_freq()
         }
 
 class SCIP:

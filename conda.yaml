@@ -8,8 +8,8 @@ dependencies:
   - swig=4.0.2
   - numpy
   - scipy
-  - pandas
   - pip
+  - matplotlib
   - pip:
     - hyperopt
     - scikit-learn

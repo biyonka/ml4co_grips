@@ -14,7 +14,7 @@ from collections import Counter
 def write_file(family, set_of_instances, file_name, with_classes=False, y=None):
     F = open(file_name, "w+")
     for i, f in enumerate(set_of_instances):
-        F.write(family + "_" + f + ".mps.gz")
+        F.write("../instances/{}_{}/train/{}_{}.mps.gz".format(num_dataset[family], family, family, f))
         if with_classes:
             k = list(names).index(f)
             F.write(",{}".format(y[k]))
@@ -74,11 +74,15 @@ if __name__ == "__main__":
     except:
         raise ValueError("Directory path should end with / or \\")
 
+
     # Store the name of the instance family in a variable
     family = args.p
     hm = args.hm
     sample_size = args.s
     train_test_percentage = args.r
+
+    # Associate dataset name to a number
+    num_dataset = {'item_placement': "1"}
 
     ######################################
     # Collect one score for each instance
@@ -140,7 +144,8 @@ if __name__ == "__main__":
     print("Files for the training set:", len(Xtr), flush=True)
     print("Files for the test set:", len(Xte), flush=True)
 
-    write_file(family, Xtr, "./SMAC/instance_path_train.txt")
-    write_file(family, Xte, "./SMAC/instance_path_test.txt")
-    write_file(family, Xtr, "./hb/instance_path_train_with_classes.txt", with_classes=True, y = y_cluster)
-    write_file(family, Xte, "./hb/instance_path_test_with_classes.txt", with_classes=True, y=y_cluster)
+    number = num_dataset[family]
+    write_file(family, Xtr, "./SMAC/{}_instance_path_train.txt".format(number))
+    write_file(family, Xte, "./SMAC/{}_instance_path_test.txt".format(number))
+    write_file(family, Xtr, "./hb/{}_instance_path_train_with_classes.txt".format(number), with_classes=True, y = y_cluster)
+    write_file(family, Xte, "./hb/{}_instance_path_test_with_classes.txt".format(number), with_classes=True, y=y_cluster)

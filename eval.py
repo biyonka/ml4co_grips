@@ -8,14 +8,13 @@ Created on Mon Jul 11 09:37:16 2022
 ## evaluates a bunch of configurations on a bunch of instances and save results to a csv file
 import csv
 import numpy as np
-#import os
 
 from utils import SCIP
 from utils import Log
 from ConfigSpace import Configuration
-from ConfigSpace import ConfigurationSpace
+# from ConfigSpace import ConfigurationSpace
 
-import ConfigSpace.hyperparameters as CSH
+# import ConfigSpace.hyperparameters as CSH
 
 def evaluation(instances, configurations, seeds, procedure, time_limit):
     '''
@@ -43,10 +42,6 @@ def evaluation(instances, configurations, seeds, procedure, time_limit):
     lines = inst_file.readlines()
     inst_file.close()
     
-    just_these_lines = lines[:2]
-        
-    #print(lines)
-    
     header = ["Instance", "Configuration_Procedure", "Primal_Dual_Integral_Percentage_Average", 
           "Primal_Dual_Integral_Percentage_Standard_Deviation"]
     name_of_file = procedure + "_Results"
@@ -54,7 +49,7 @@ def evaluation(instances, configurations, seeds, procedure, time_limit):
     writer = csv.writer(file)
     writer.writerow(header)               
                      
-    for line in just_these_lines:
+    for line in lines:
         path = line.rstrip("\n")
         for configuration in configs_as_dict:
             pdi_percentage = []
@@ -74,46 +69,41 @@ def evaluation(instances, configurations, seeds, procedure, time_limit):
             name = path.split("/")[-1].split(".")[0]
             data = [name, procedure, average_across_seeds, std_across_seeds]
             writer.writerow(data)
-            #print("1 row added to CSV file")
     file.close()
             
             
 #TESTING
-cs = ConfigurationSpace()
-hyperparams=[
-CSH.CategoricalHyperparameter('branching/scorefunc', ['s', 'p', 'q'],default_value='q'),
-CSH.UniformFloatHyperparameter('branching/scorefac', 0, 1,default_value=0.167),
-CSH.CategoricalHyperparameter('branching/preferbinary', [True, False],default_value=False),
-CSH.UniformFloatHyperparameter('branching/clamp', 0, 0.5,default_value=0.2),
-CSH.UniformFloatHyperparameter('branching/midpull', 0, 1,default_value=0.75),
-CSH.UniformFloatHyperparameter('branching/midpullreldomtrig', 0, 1,default_value=0.5),
-CSH.CategoricalHyperparameter('branching/lpgainnormalize', ['d','l','s'],default_value='s'),
-CSH.CategoricalHyperparameter('lp/pricing', ['l','a','f','p','s','q','d'],default_value='l'),
-CSH.UniformIntegerHyperparameter('lp/colagelimit', -1, 2147483647,default_value=10),
-CSH.UniformIntegerHyperparameter('lp/rowagelimit', -1, 2147483647,default_value=10),
-CSH.CategoricalHyperparameter('nodeselection/childsel',['d','u','p','i','l','r','h'],default_value='h'),
-CSH.UniformFloatHyperparameter('separating/minortho', 0, 1,default_value=0.9),
-CSH.UniformFloatHyperparameter('separating/minorthoroot', 0, 1,default_value=0.9),
-CSH.UniformIntegerHyperparameter('separating/maxcuts', 0, 2147483647,default_value=100),
-CSH.UniformIntegerHyperparameter('separating/maxcutsroot', 0, 2147483647,default_value=2000),
-CSH.UniformIntegerHyperparameter('separating/maxroundsroot', -1, 2147483647,default_value=-1),
-CSH.UniformFloatHyperparameter('separating/minefficacyroot', 0, 1e+98,default_value=0.0001),
-CSH.UniformIntegerHyperparameter('separating/cutagelimit', -1, 2147483647,default_value=80),
-CSH.UniformIntegerHyperparameter('separating/poolfreq', -1, 65534,default_value=10),
-CSH.UniformIntegerHyperparameter('presolving/maxrounds', -1, 2147483647,default_value=-1),
-CSH.UniformFloatHyperparameter('presolving/abortfac', 0, 1,default_value=0.0008),
-CSH.UniformIntegerHyperparameter('presolving/maxrestarts', -1, 2147483647,default_value=-1)
-]
-cs.add_hyperparameters(hyperparams)
+# cs = ConfigurationSpace()
+# hyperparams=[
+# CSH.CategoricalHyperparameter('branching/scorefunc', ['s', 'p', 'q'],default_value='q'),
+# CSH.UniformFloatHyperparameter('branching/scorefac', 0, 1,default_value=0.167),
+# CSH.CategoricalHyperparameter('branching/preferbinary', [True, False],default_value=False),
+# CSH.UniformFloatHyperparameter('branching/clamp', 0, 0.5,default_value=0.2),
+# CSH.UniformFloatHyperparameter('branching/midpull', 0, 1,default_value=0.75),
+# CSH.UniformFloatHyperparameter('branching/midpullreldomtrig', 0, 1,default_value=0.5),
+# CSH.CategoricalHyperparameter('branching/lpgainnormalize', ['d','l','s'],default_value='s'),
+# CSH.CategoricalHyperparameter('lp/pricing', ['l','a','f','p','s','q','d'],default_value='l'),
+# CSH.UniformIntegerHyperparameter('lp/colagelimit', -1, 2147483647,default_value=10),
+# CSH.UniformIntegerHyperparameter('lp/rowagelimit', -1, 2147483647,default_value=10),
+# CSH.CategoricalHyperparameter('nodeselection/childsel',['d','u','p','i','l','r','h'],default_value='h'),
+# CSH.UniformFloatHyperparameter('separating/minortho', 0, 1,default_value=0.9),
+# CSH.UniformFloatHyperparameter('separating/minorthoroot', 0, 1,default_value=0.9),
+# CSH.UniformIntegerHyperparameter('separating/maxcuts', 0, 2147483647,default_value=100),
+# CSH.UniformIntegerHyperparameter('separating/maxcutsroot', 0, 2147483647,default_value=2000),
+# CSH.UniformIntegerHyperparameter('separating/maxroundsroot', -1, 2147483647,default_value=-1),
+# CSH.UniformFloatHyperparameter('separating/minefficacyroot', 0, 1e+98,default_value=0.0001),
+# CSH.UniformIntegerHyperparameter('separating/cutagelimit', -1, 2147483647,default_value=80),
+# CSH.UniformIntegerHyperparameter('separating/poolfreq', -1, 65534,default_value=10),
+# CSH.UniformIntegerHyperparameter('presolving/maxrounds', -1, 2147483647,default_value=-1),
+# CSH.UniformFloatHyperparameter('presolving/abortfac', 0, 1,default_value=0.0008),
+# CSH.UniformIntegerHyperparameter('presolving/maxrestarts', -1, 2147483647,default_value=-1)
+# ]
+# cs.add_hyperparameters(hyperparams)
 
-sample_hp1 = cs.sample_configuration()
-sample_hp2 = cs.sample_configuration()
+# sample_hp1 = cs.sample_configuration()
+# sample_hp2 = cs.sample_configuration()
 
-filepath = "SMAC/1_instances_path_test.txt" # how do you read in files?????
+# filepath = "SMAC/1_instances_path_test.txt"
 
-evaluation(instances = filepath, configurations = [sample_hp1, sample_hp2], seeds = [42, 43, 44], procedure = "test_configuration", time_limit = 60)
-
-# import os
-# os.listdir("/home/azhang/ml4co_grips/SMAC")
-# os.getcwd()
+# evaluation(instances = filepath, configurations = [sample_hp1, sample_hp2], seeds = [42, 43, 44], procedure = "test_configuration", time_limit = 60)
             

@@ -58,6 +58,8 @@ def evaluation(instances, configurations, seeds, procedure, time_limit):
         path = line.rstrip("\n")
         name = path.split("/")[-1].split(".")[0]
         for configuration in configurations:
+            if 'limits/time' in configuration.keys():
+                del configuration['limits/time']
             pdi_percentage = []
             for seed in seeds:
                 scip = SCIP()

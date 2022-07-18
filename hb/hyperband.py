@@ -3,7 +3,7 @@ import numpy as np
 from random import random
 from math import log, ceil
 from time import time, ctime
-
+import pickle
 
 class Hyperband:
 	
@@ -11,7 +11,7 @@ class Hyperband:
 		self.get_params = get_params_function
 		self.try_params = try_params_function
 		
-		self.max_resource = 10000	 	# maximum tree size for each config
+		self.max_resource = 5	# maximum tree size for each config
 		self.eta = 5			# defines configuration downsampling rate (default = 3)
 
 		self.logeta = lambda x: log( x ) / log( self.eta )
@@ -22,10 +22,12 @@ class Hyperband:
 		self.counter = 0
 		self.best_loss = np.inf
 		self.best_counter = -1
-		
+		#keeps track of the best counter index for a given time
+		self.best_by_time = []
 
 	# can be called multiple times
 	def run( self, skip_last = 0, dry_run = False ):
+		hb_start_time  = time() 
 		
 		for s in reversed( range( self.s_max + 1 )):
 			
@@ -40,7 +42,6 @@ class Hyperband:
 			T = [ self.get_params() for i in range( n )] 
 			
 			for i in range(( s + 1 ) - skip_last):
-				print(i, s+1)
 				
 				# Run each of the n configs for <resource> 
 				# and keep best (n_configs / eta) configurations
@@ -54,7 +55,6 @@ class Hyperband:
 				early_stops = []
 				
 				for t in T:
-					
 					self.counter += 1
 					print("\n{} | {} | lowest loss so far: {:.4f} (run {})\n".format( 
 						self.counter, ctime(), self.best_loss, self.best_counter ))
@@ -65,6 +65,8 @@ class Hyperband:
 						result = { 'loss': random(), 'log_loss': random(), 'auc': random()}
 					else:
 						result = self.try_params( n_resource, t )		# <---
+					time_since_start =  time() - hb_start_time 
+					result['time'] = ctime()
 						
 					assert( type( result ) == dict )
 					assert( 'loss' in result )
@@ -88,14 +90,21 @@ class Hyperband:
 					result['seconds'] = seconds
 					result['params'] = t
 					result['resource'] = n_resource
-					
 					self.results.append( result )
+					
+					with open('int_results.pkl', 'wb') as f:
+						pickle.dump(self.results, f)
+					
+					self.best_by_time.append({time_since_start: self.best_counter})
+					with open('best_index.pkl', 'wb') as f:
+						pickle.dump(self.best_by_time, f)
+    
 				
 				# select a number of best configurations for the next loop
 				# filter out early stops, if any
 				indices = np.argsort( val_losses )
 				T = [ T[i] for i in indices if not early_stops[i]]
 				T = T[ 0:int( n_configs / self.eta )]
-		
+					
 		return self.results
 	

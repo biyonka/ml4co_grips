@@ -8,22 +8,20 @@ Created on Mon Jul 11 09:37:16 2022
 ## evaluates a bunch of configurations on a bunch of instances and save results to a csv file
 import csv
 import numpy as np
+import pickle
+import argparse
 
 from utils import SCIP
 from utils import Log
-from ConfigSpace import Configuration
-# from ConfigSpace import ConfigurationSpace
-
-# import ConfigSpace.hyperparameters as CSH
 
 def evaluation(instances, configurations, seeds, procedure, time_limit):
     '''
     Parameters
     ----------
     instances: file path to the instances
-    configurations: list of configuration type objects
+    configurations: pickle type object that contains a list of configs, file name ends in .pkl
     seeds: list of seeds for SCIP
-    procedure: string. example: "default", "hyperband"
+    procedure: string. example: "hyperband"
     time_limit: int time limit for running SCIP (in seconds)
     
     Returns
@@ -33,31 +31,32 @@ def evaluation(instances, configurations, seeds, procedure, time_limit):
     '''
     # results_as_dict = {}
     # find some way to save configuration too with the remaining results: have one method down below that could work...
-    # read in each instance on the .txt file
-    configs_as_dict = []
-    for config in configurations:
-        configs_as_dict.append(Configuration.get_dictionary(config))
+    with open(configurations, "rb") as best_configs:
+        configurations = pickle.load(best_configs)
+        # change this, maybe, if list of length > 1?
         
     inst_file = open(instances, "r")
     lines = inst_file.readlines()
     inst_file.close()
     
-    header = ["Instance", "Configuration_Procedure", "Primal_Dual_Integral_Percentage_Average", 
-          "Primal_Dual_Integral_Percentage_Standard_Deviation"]
-    name_of_file = procedure + "_Results"
-    file = open(name_of_file, "w", newline = "")
-    writer = csv.writer(file)
-    writer.writerow(header)               
+    header = ["Instance", "PDI_Percentage_Average", 
+          "PDI_Percentage_Two_Std_Error"]
+    
+    name_of_file = procedure + " Results"
+    results_file = open(name_of_file, "w", newline = "")
+    writer = csv.writer(results_file)
+    writer.writerow(header)
+    results_file.close()          
                      
     for line in lines:
         path = line.rstrip("\n")
-        for configuration in configs_as_dict:
+        for configuration in configurations:
             pdi_percentage = []
             for seed in seeds:
                 scip = SCIP()
-                scip.write_parameter_file(D = configuration, timelimit = time_limit)
-                scip.run(path = path, seed = seed) # error here: cannot find results.log
-                l = Log(path = "logfile.log.gz")
+                scip.write_parameter_file(D = configuration, filename = procedure + ".set", timelimit = time_limit)
+                scip.run(path = path, logfile = procedure + ".log", parameter_configuration = procedure + ".set", seed = seed) # error here: cannot find results.log
+                l = Log(path = procedure + ".log.gz")
                 # results_as_dict[self.instance + "_Seed_" + str(seed) + "_Results"] = l.parse()
                 # results_as_dict[self.instance + " Seed " + str(seed) + " Results"] = l.parse().update(configuration)
             ## compute average and standard deviation across seeds for primal-dual integral percentage
@@ -65,45 +64,33 @@ def evaluation(instances, configurations, seeds, procedure, time_limit):
             ## now we have the primal dual integral percentage 
             average_across_seeds = np.average(pdi_percentage)
             std_across_seeds = np.std(pdi_percentage, ddof = 1)
+            twice_se_across_seeds = (2*std_across_seeds)/np.sqrt(len(seeds))
             ## now add to CSV file!
             name = path.split("/")[-1].split(".")[0]
-            data = [name, procedure, average_across_seeds, std_across_seeds]
+            data = [name, average_across_seeds, twice_se_across_seeds]
+            results_file = open(name_of_file, "a")
+            writer = csv.writer(results_file)
             writer.writerow(data)
-    file.close()
-            
+            results_file.close()
+                
+if __name__ == "__main__":
+    args = argparse.ArgumentParser()
+    args.add_argument("-c", help = ".pkl file containing a list of configurations", type = str)
+    args.add_argument("-f", help = "file with list of instances", type = str)
+    args.add_argument("-t", help = "time limit for SCIP", type = int)
+    args.add_argument("-p", help = "optimization procedure (ex: hyperband, SMAC)", type = str)
+    
+    args.parse_args()
+    
+    config_filepath = args.c
+    filepath = args.f
+    timelimit = args.t
+    opt_procedure = args.p
             
 #TESTING
-# cs = ConfigurationSpace()
-# hyperparams=[
-# CSH.CategoricalHyperparameter('branching/scorefunc', ['s', 'p', 'q'],default_value='q'),
-# CSH.UniformFloatHyperparameter('branching/scorefac', 0, 1,default_value=0.167),
-# CSH.CategoricalHyperparameter('branching/preferbinary', [True, False],default_value=False),
-# CSH.UniformFloatHyperparameter('branching/clamp', 0, 0.5,default_value=0.2),
-# CSH.UniformFloatHyperparameter('branching/midpull', 0, 1,default_value=0.75),
-# CSH.UniformFloatHyperparameter('branching/midpullreldomtrig', 0, 1,default_value=0.5),
-# CSH.CategoricalHyperparameter('branching/lpgainnormalize', ['d','l','s'],default_value='s'),
-# CSH.CategoricalHyperparameter('lp/pricing', ['l','a','f','p','s','q','d'],default_value='l'),
-# CSH.UniformIntegerHyperparameter('lp/colagelimit', -1, 2147483647,default_value=10),
-# CSH.UniformIntegerHyperparameter('lp/rowagelimit', -1, 2147483647,default_value=10),
-# CSH.CategoricalHyperparameter('nodeselection/childsel',['d','u','p','i','l','r','h'],default_value='h'),
-# CSH.UniformFloatHyperparameter('separating/minortho', 0, 1,default_value=0.9),
-# CSH.UniformFloatHyperparameter('separating/minorthoroot', 0, 1,default_value=0.9),
-# CSH.UniformIntegerHyperparameter('separating/maxcuts', 0, 2147483647,default_value=100),
-# CSH.UniformIntegerHyperparameter('separating/maxcutsroot', 0, 2147483647,default_value=2000),
-# CSH.UniformIntegerHyperparameter('separating/maxroundsroot', -1, 2147483647,default_value=-1),
-# CSH.UniformFloatHyperparameter('separating/minefficacyroot', 0, 1e+98,default_value=0.0001),
-# CSH.UniformIntegerHyperparameter('separating/cutagelimit', -1, 2147483647,default_value=80),
-# CSH.UniformIntegerHyperparameter('separating/poolfreq', -1, 65534,default_value=10),
-# CSH.UniformIntegerHyperparameter('presolving/maxrounds', -1, 2147483647,default_value=-1),
-# CSH.UniformFloatHyperparameter('presolving/abortfac', 0, 1,default_value=0.0008),
-# CSH.UniformIntegerHyperparameter('presolving/maxrestarts', -1, 2147483647,default_value=-1)
-# ]
-# cs.add_hyperparameters(hyperparams)
-
-# sample_hp1 = cs.sample_configuration()
-# sample_hp2 = cs.sample_configuration()
 
 # filepath = "SMAC/1_instances_path_test.txt"
+# config_filepath = "/home/azhang/Downloads/hb_best_config.pkl"
 
-# evaluation(instances = filepath, configurations = [sample_hp1, sample_hp2], seeds = [42, 43, 44], procedure = "test_configuration", time_limit = 60)
+    evaluation(instances = filepath, configurations = config_filepath, seeds = [3, 4, 5], procedure = opt_procedure, time_limit = timelimit)
             

@@ -48,7 +48,7 @@ class SMACscenario :
             "output_dir" : "SMAC3_output",
             "train_inst_fn" : "1_instances_path_train.txt",
             "test_inst_fn": "1_instances_path_test.txt",
-            "algo_runs_timelimit" : 180 * 42 * 40 + 180  #3 min * 42 seed * 40 test instances + 3 min
+            "algo_runs_timelimit" : 2 * 24 * 60 * 60
         })
         return scenario
 

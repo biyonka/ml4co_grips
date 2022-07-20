@@ -44,7 +44,7 @@ def evaluation(instances, configurations, seeds, procedure, time_limit):
 
     header = ["Instance", procedure + "_PDIP",
               procedure + "_PDIP_se", procedure + "_PB", procedure + "_PB_se",
-              procedure + "_DB", procedure + "DB_se", procedure + "_PDIB", 
+              procedure + "_DB", procedure + "_DB_se", procedure + "_PDIB", 
               procedure + "_PDIB_se"]
 
     name_of_file = procedure + "_results.csv"

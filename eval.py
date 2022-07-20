@@ -52,10 +52,8 @@ def evaluation(instances, configurations, seeds, procedure, time_limit):
     writer = csv.writer(results_file)
     writer.writerow(header)
     results_file.close()
-    
-    just_these = lines[:3]
 
-    for line in just_these:
+    for line in lines:
         path = line.rstrip("\n")
         name = path.split("/")[-1].split(".")[0]
         for configuration in configurations:

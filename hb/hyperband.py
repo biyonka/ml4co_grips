@@ -72,7 +72,7 @@ class Hyperband:
 					assert( 'loss' in result )
 					
 					seconds = int( round( time() - start_time ))
-					print("\n{} seconds.".format( seconds ))
+					print("\n{} seconds runtime.".format( seconds ))
 					
 					loss = result['loss']	
 					val_losses.append( loss )
@@ -86,10 +86,14 @@ class Hyperband:
 						self.best_loss = loss
 						self.best_counter = self.counter
 					
+					#params = t.copy()
+					#del params['limits/time']
+					#del params['limits/nodes']
 					result['counter'] = self.counter
-					result['seconds'] = seconds
-					result['params'] = t
+					result['time_since_start'] = time_since_start
+					result['runtime'] = seconds
 					result['resource'] = n_resource
+					result['params'] = t
 					self.results.append( result )
 					
 					with open('int_results.pkl', 'wb') as f:

@@ -50,18 +50,30 @@ def get_params():
 #n_iterations is just the resource we are allocating (tree size for now, can change later)
 def try_params(resource, params):
     print('tree size', resource)
-
-    #Allocate resource to SCIP
-    params['limits/nodes'] = resource
-    
-    #Add time limit to scip params, use 3 minutes for now
-    params['limits/time'] = 180	
     pprint(params)
     
+    params_copy = params.copy()
+    #Allocate resource to SCIP
+    params_copy['limits/nodes'] = resource
+    
+    #Add time limit to scip params, use 3 minutes for now
+    params_copy['limits/time'] = 180	
+    
     #run SCIP on instances to get list of performance measures (one per instance)
-    scip_pd_perc = run_and_eval_scip(params, list_of_instances, feature="Primal-Dual Integral Percentage")
-    scip_pd_val = run_and_eval_scip(params, list_of_instances, feature="Primal-Dual Integral Value")
+    #scip_pd_perc = run_and_eval_scip(params, list_of_instances, feature="Primal-Dual Integral Percentage")
+    
+    scip_perf = run_and_eval_scip(params_copy, list_of_instances)
+    scip_pd_perc = scip_perf['Primal-Dual Integral Percentage']
+    scip_pd_val = scip_perf['Primal-Dual Integral Value']
+    scip_pd_gap = scip_perf['Gap']
+    scip_pb = scip_perf['Primal Bound']
+    scip_db = scip_perf['Dual Bound']
+    
     optimizing_stat = gmean(scip_pd_perc)
     pd_val = gmean(scip_pd_val)
-    print("Current PDIntPerc: {}, PDIntVal: {}".format( optimizing_stat, pd_val ))	
-    return {'loss': optimizing_stat, 'PDIntVal':  pd_val, 'PDIntPerc': optimizing_stat}
+    pd_gap = gmean(scip_pd_gap)
+    pb = gmean(scip_pb)
+    db = gmean(scip_db)
+    
+    print("Current PDIntPerc: {}, PDIntVal: {}, Gap: {}, PB: {}, DB: {}".format(optimizing_stat, pd_val, pd_gap, pb, db ))	
+    return {'loss':optimizing_stat,'PDIntVal':pd_val,'Gap':pd_gap, 'PB':pb, 'DB':db}

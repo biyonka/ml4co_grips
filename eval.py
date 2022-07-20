@@ -52,8 +52,10 @@ def evaluation(instances, configurations, seeds, procedure, time_limit):
     writer = csv.writer(results_file)
     writer.writerow(header)
     results_file.close()
+    
+    just_these = lines[:3]
 
-    for line in lines:
+    for line in just_these:
         path = line.rstrip("\n")
         name = path.split("/")[-1].split(".")[0]
         for configuration in configurations:
@@ -74,6 +76,7 @@ def evaluation(instances, configurations, seeds, procedure, time_limit):
                 dual_gap.append(l.get_dual_bound())
                 prim_dual_gap.append(l.get_gap())
                 os.remove(name + "_" + procedure + ".log.gz")
+                os.remove(procedure + ".set")
             avgs = [np.average(pdi_percentage), np.average(primal_gap), 
                     np.average(dual_gap), np.average(prim_dual_gap)]
             std_devs = [np.std(pdi_percentage, ddof=1), np.std(primal_gap, ddof=1), 

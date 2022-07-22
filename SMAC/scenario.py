@@ -46,8 +46,8 @@ class SMACscenario :
             "run_obj": "quality",  # Optimize quality (alternatively runtime)
             "cs": self.get_configSpace(),
             "output_dir" : "SMAC3_output",
-            "train_inst_fn" : "1_instances_path_train.txt",
-            "test_inst_fn": "1_instances_path_test.txt",
+            "train_inst_fn" : "2_instances_path_train.txt",
+            "test_inst_fn": "2_instances_path_test.txt",
             "algo_runs_timelimit" : 2 * 24 * 60 * 60
         })
         return scenario

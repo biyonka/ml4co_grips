@@ -11,7 +11,7 @@ class Hyperband:
 		self.get_params = get_params_function
 		self.try_params = try_params_function
 		
-		self.max_resource = 5	# maximum tree size for each config
+		self.max_resource = 10000	# maximum tree size for each config
 		self.eta = 5			# defines configuration downsampling rate (default = 3)
 
 		self.logeta = lambda x: log( x ) / log( self.eta )

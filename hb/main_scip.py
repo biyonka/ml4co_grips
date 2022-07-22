@@ -24,7 +24,7 @@ print("{} total, best:\n".format(len(results)))
 
 for r in sorted(results, key=lambda x: x['loss'])[:5]:
     print("PDIntPerc: {} | {} seconds | {:.1f} resource | run {} ".format(
-        r['loss'], r['seconds'], r['resource'], r['counter']))
+        r['loss'], r['runtime'], r['resource'], r['counter']))
     pprint(r['params'])
     print()
 

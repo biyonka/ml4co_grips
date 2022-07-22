@@ -109,7 +109,7 @@ def train_and_eval_sklearn_regressor(clf, data):
 def run_and_eval_scip(config, list_of_instances):
 	keys = ["Primal-Dual Integral Value", "Primal-Dual Integral Percentage",
 			"Gap", "Time First Feasible", "Primal Bound", "Dual Bound", "B&B Tree nodes",
-			"Time to Solve Root Node", "Number of LP Iterations"]
+			"Time to Solve Root Node", "Number of LP Iterations", "Total Time"]
 	out = dict(zip(keys, [[] for _ in keys]))
 	# Loop on all the files
 	for file in list_of_instances:

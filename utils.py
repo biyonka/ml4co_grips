@@ -6,6 +6,7 @@ import gzip
 import os
 import re
 import subprocess
+import sys
 
 
 class Log:
@@ -43,9 +44,12 @@ class Log:
 
     def get_running_time_first_feasible(self):
         lines = self.vectorise()
-        line = filter(lambda x: "First Solution" in x, lines)
-        time = next(line).split("seconds")[0].split(",")[-1]
-        return float(time)
+        try: 
+            line = filter(lambda x: "First Solution" in x, lines)
+            time = next(line).split("seconds")[0].split(",")[-1]
+            return float(time)
+        except:
+            return sys.float_info.max
 
     def get_primal_bound(self):
         lines = self.vectorise()
@@ -67,9 +71,12 @@ class Log:
 
     def get_root_node_solving_time(self):
         lines = self.vectorise()
-        line = filter(lambda x: "First LP Time" in x, lines)
-        root_node_time = next(line).split(":")[-1].strip()
-        return float(root_node_time)
+        try:
+            line = filter(lambda x: "First LP Time" in x, lines)
+            root_node_time = next(line).split(":")[-1].strip()
+            return float(root_node_time)
+        except:
+            return sys.float_info.max
 
     def get_LP_iter_freq(self):
         lines = self.vectorise()

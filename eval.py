@@ -45,7 +45,7 @@ def evaluation(instances, configurations, seeds, procedure, time_limit):
     header = ["Instance", procedure + "_PDIP",
               procedure + "_PDIP_se", procedure + "_PB", procedure + "_PB_se",
               procedure + "_DB", procedure + "_DB_se", procedure + "_PDIB", 
-              procedure + "_PDIB_se"]
+              procedure + "_PDIB_se", procedure + "Total Time"]
 
     name_of_file = procedure + "_results.csv"
     results_file = open(name_of_file, "w", newline="")
@@ -73,6 +73,7 @@ def evaluation(instances, configurations, seeds, procedure, time_limit):
                 primal_gap.append(l.get_primal_bound())
                 dual_gap.append(l.get_dual_bound())
                 prim_dual_gap.append(l.get_gap())
+                time = l.get_time()
                 os.remove(name + "_" + procedure + ".log.gz")
                 os.remove(procedure + ".set")
             avgs = [np.average(pdi_percentage), np.average(primal_gap), 
@@ -86,6 +87,7 @@ def evaluation(instances, configurations, seeds, procedure, time_limit):
             for i in range(len(avgs)):
                 data.append(avgs[i])
                 data.append(twice_se[i])
+            data.append(time)
             results_file = open(name_of_file, "a")
             writer = csv.writer(results_file)
             writer.writerow(data)

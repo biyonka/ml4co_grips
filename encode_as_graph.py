@@ -10,7 +10,7 @@ import numpy as np
 import gurobipy
 import math
 
-from gurobipy import GRB
+# from gurobipy import GRB
 
 class Encode:
     def __init__(self, file_path):
@@ -65,10 +65,6 @@ class Encode:
             
         return G
         
-# TESTING
-
-# test_model = Encode("../instances/1_item_placement/one/item_placement_0.mps.gz")
-# test_model.encode_as_graph()
 
 
 

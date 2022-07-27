@@ -45,16 +45,18 @@ def get_all_features(file_path, purpose):
     just_these_lines = lines[:4]
     
     for line in just_these_lines:
+        
+        path = line.rstrip("\n") #this is the actual path name
     
         instance_name = line.split("/")[-1].split(".")[0]
     
-        model = Encode(line)
+        model = Encode(path)
         G = model.encode_as_graph()
     
         extract_from_G = Graph_Extractor(G)
         graph_feats = extract_from_G.all_features()
     
-        extract_from_inst = Instance_Extractor(line)
+        extract_from_inst = Instance_Extractor(path)
         inst_feats = extract_from_inst.all_inst_features()
     
         all = {"Instance": instance_name, **inst_feats, **graph_feats}

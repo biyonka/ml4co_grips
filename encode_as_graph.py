@@ -64,11 +64,3 @@ class Encode:
             G.add_weighted_edges_from([weighted_edge])
             
         return G
-        
-
-
-
-
-
-
-

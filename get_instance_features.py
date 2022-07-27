@@ -25,36 +25,42 @@ def get_all_features(file_path, purpose):
     CSV file with instance features
 
     '''
+    inst_file = open(file_path, "r")
+    lines = inst_file.readlines()
+    inst_file.close()
+    
     header = ["Instance", "Number of Variables", "Average of Variable Ranges", 
               "Median of Variable Ranges", "Variance of Variable Ranges", 
               "Average Number of Variable Appearances", "Variance of Number of Variable Appearances",
               "Number of Constraints", "Percent of Equality Constraints", "Coefficient Average",
               "Coefficient Variance", "Variables over Constraints", "Graph Density",
               "Graph Treewidth", "Graph Modularity", "Graph Transitivity"]
-    
+
     file_name = purpose + "_Instance_Features"
     features_file = open(file_name, "w", newline = "")
     writer = csv.writer(features_file)
     writer.writerow(header)
     features_file.close()
     
-    instance_name = file_path.split("/")[-1].split(".")[0]
+    for line in lines:
     
-    model = Encode(file_path)
-    G = model.encode_as_graph()
+        instance_name = line.split("/")[-1].split(".")[0]
     
-    extract_from_G = Graph_Extractor(G)
-    graph_feats = extract_from_G.all_features()
+        model = Encode(line)
+        G = model.encode_as_graph()
     
-    extract_from_inst = Instance_Extractor(file_path)
-    inst_feats = extract_from_inst.all_inst_features()
+        extract_from_G = Graph_Extractor(G)
+        graph_feats = extract_from_G.all_features()
     
-    all = {"Instance": instance_name, **inst_feats, **graph_feats}
+        extract_from_inst = Instance_Extractor(line)
+        inst_feats = extract_from_inst.all_inst_features()
     
-    features_file = open(file_name, "a")
-    writer = csv.DictWriter(features_file, all.keys())
-    writer.writerow(all)
-    features_file.close()
+        all = {"Instance": instance_name, **inst_feats, **graph_feats}
+    
+        features_file = open(file_name, "a")
+        writer = csv.DictWriter(features_file, all.keys())
+        writer.writerow(all)
+        features_file.close()
     
 if __name__ == "__main__":    
     parser = argparse.ArgumentParser()

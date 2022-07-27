@@ -42,7 +42,9 @@ def get_all_features(file_path, purpose):
     writer.writerow(header)
     features_file.close()
     
-    for line in lines:
+    just_these_lines = lines[:4]
+    
+    for line in just_these_lines:
     
         instance_name = line.split("/")[-1].split(".")[0]
     

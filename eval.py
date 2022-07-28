@@ -42,7 +42,7 @@ def evaluation(instances, configurations, seeds, procedure, time_limit):
     lines = inst_file.readlines()
     inst_file.close()
 
-    header = ["Instance", procedure + "_PDIP",
+    header = ["Instance", "config_number", procedure + "_PDIP",
               procedure + "_PDIP_se", procedure + "_PB", procedure + "_PB_se",
               procedure + "_DB", procedure + "_DB_se", procedure + "_PDIB", 
               procedure + "_PDIB_se", procedure + "Total Time"]
@@ -56,13 +56,15 @@ def evaluation(instances, configurations, seeds, procedure, time_limit):
     for line in lines:
         path = line.rstrip("\n")
         name = path.split("/")[-1].split(".")[0]
-        for configuration in configurations:
+        for i, configuration in enumerate(configurations):
+            config_number = i
             if 'limits/time' in configuration.keys():
                 del configuration['limits/time']
             pdi_percentage = []
             primal_gap = []
             dual_gap = []
             prim_dual_gap = []
+            time = []
             for seed in seeds:
                 scip = SCIP()
                 scip.write_parameter_file(D=configuration, filename=procedure + ".set", timelimit=time_limit)
@@ -73,7 +75,7 @@ def evaluation(instances, configurations, seeds, procedure, time_limit):
                 primal_gap.append(l.get_primal_bound())
                 dual_gap.append(l.get_dual_bound())
                 prim_dual_gap.append(l.get_gap())
-                time = l.get_time()
+                time.append(l.get_time())
                 os.remove(name + "_" + procedure + ".log.gz")
                 os.remove(procedure + ".set")
             avgs = [np.average(pdi_percentage), np.average(primal_gap), 
@@ -83,11 +85,11 @@ def evaluation(instances, configurations, seeds, procedure, time_limit):
             twice_se = []
             for std_dev in std_devs:
                 twice_se.append((2 * std_dev) / np.sqrt(len(seeds)))
-            data = [name]
+            data = [name, config_number]
             for i in range(len(avgs)):
                 data.append(avgs[i])
                 data.append(twice_se[i])
-            data.append(time)
+            data.append(np.average(time))
             results_file = open(name_of_file, "a")
             writer = csv.writer(results_file)
             writer.writerow(data)
@@ -110,3 +112,4 @@ if __name__ == "__main__":
 
     evaluation(instances=filepath, configurations=config_filepath, seeds=[3, 4, 5], procedure=opt_procedure,
                time_limit=timelimit)
+

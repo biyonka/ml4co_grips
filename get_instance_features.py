@@ -42,9 +42,7 @@ def get_all_features(file_path, purpose):
     writer.writerow(header)
     features_file.close()
     
-    just_these_lines = lines[:4]
-    
-    for line in just_these_lines:
+    for line in lines:
         
         path = line.rstrip("\n") #this is the actual path name
     

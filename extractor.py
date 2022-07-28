@@ -14,6 +14,8 @@ from networkx.algorithms.approximation.treewidth import treewidth_min_degree
 from networkx.algorithms.community import greedy_modularity_communities
 from networkx.algorithms.community import modularity
 
+from encode_as_graph import Encode
+
 class Instance_Extractor:
     def __init__(self, file_path):
         self.model = gurobipy.read(file_path)
@@ -37,10 +39,10 @@ class Instance_Extractor:
         for var in self.model.getVars():
             appearance = 0
             for cons in self.model.getConstrs():
-                if np.abs(self.model.getCoeff(cons, var)) > 0:
+                if self.model.getCoeff(cons, var) != 0:
                     appearance += 1 # increase value of appearance variable
                     # by 1 every time we find the variable in a constraint
-            if np.abs(var.Obj) > 0: # if the variable appears in the obj function
+            if var.Obj != 0: # if the variable appears in the obj function
             # increase appearance by 1
                 appearance += 1
             appearances.append(appearance) # list of appearances for each variable
@@ -106,7 +108,7 @@ class Graph_Extractor:
         mod = modularity(self.graph, best_comms_as_lists)
         return mod
     
-    def get_transitivity(self):
+    def get_transitivity(self): # this will always be 0 because we have a bipartite graph!
         transitivity = nx.transitivity(self.graph)
         return transitivity
     
@@ -117,4 +119,13 @@ class Graph_Extractor:
             "Graph Modularity": self.get_modularity(),
             "Graph Transitivity": self.get_transitivity(),
         }
+    
+# test_graph = Encode("../instances/1_item_placement/testing/item_placement_0.mps.gz")
+# encoded_as_graph = test_graph.encode_as_graph()
+# to_extract = Graph_Extractor(encoded_as_graph)
+# to_extract.get_density()
+# to_extract.get_treewidth()
+# to_extract.get_modularity()
+# to_extract.get_transitivity()
+
     

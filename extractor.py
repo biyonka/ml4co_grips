@@ -14,8 +14,6 @@ from networkx.algorithms.approximation.treewidth import treewidth_min_degree
 from networkx.algorithms.community import greedy_modularity_communities
 from networkx.algorithms.community import modularity
 
-from encode_as_graph import Encode
-
 class Instance_Extractor:
     def __init__(self, file_path):
         self.model = gurobipy.read(file_path)
@@ -119,13 +117,6 @@ class Graph_Extractor:
             "Graph Modularity": self.get_modularity(),
             "Graph Transitivity": self.get_transitivity(),
         }
-    
-# test_graph = Encode("../instances/1_item_placement/testing/item_placement_0.mps.gz")
-# encoded_as_graph = test_graph.encode_as_graph()
-# to_extract = Graph_Extractor(encoded_as_graph)
-# to_extract.get_density()
-# to_extract.get_treewidth()
-# to_extract.get_modularity()
-# to_extract.get_transitivity()
+
 
     

@@ -161,7 +161,7 @@ def run_SCIP_with_smac(config, budget, instance, seed=42):
     path_to_run_folder= "./SMAC3_output/" + output_folder + "/"
     instance_file_name = instance.split("/")[-1]
     instance_new = path_to_run_folder  + instance_file_name
-    scip.write_parameter_file(sample_cfgs_dict, filename=instance_new + "_SMAC.set", timelimit=10)
+    scip.write_parameter_file(sample_cfgs_dict, filename=instance_new + "_SMAC.set", timelimit=180)
     scip.run(instance, logfile=instance_new + ".log", parameter_configuration="{}_SMAC.set".format(instance_new), seed=seed,
              q=False)
 

@@ -3,7 +3,7 @@ import ConfigSpace as CS
 from smac.scenario.scenario import Scenario
 
 class SMACscenario :
-    def __init__(self):
+    def __init__(self,arg_name_folder):
         # Define configuration space
         self.hyperparams = [
             CSH.CategoricalHyperparameter('branching/scorefunc', ['s', 'p', 'q'], default_value='q'),
@@ -31,6 +31,8 @@ class SMACscenario :
             CSH.UniformIntegerHyperparameter('presolving/maxrestarts', -1, 2147483647, default_value=-1)
         ]
         self.configspace = CS.ConfigurationSpace()
+        self.set_configSpace()
+        self.arg_name_folder=arg_name_folder
 
     def set_configSpace(self) :
         for hp in self.hyperparams:
@@ -39,16 +41,15 @@ class SMACscenario :
     def get_configSpace(self):
         return self.configspace
 
-    # Provide meta data for the optimization
-    def get_scenario(self) :
-        self.set_configSpace()
-        scenario = Scenario({
+
+
+    def get_scenario(self):
+        return Scenario({
             "run_obj": "quality",  # Optimize quality (alternatively runtime)
             "cs": self.get_configSpace(),
-            "output_dir" : "SMAC3_output",
-            "train_inst_fn" : "2_instances_path_train.txt",
-            "test_inst_fn": "2_instances_path_test.txt",
-            "algo_runs_timelimit" : 2 * 24 * 60 * 60
+            "output_dir" : "SMAC3_output/" + self.arg_name_folder,
+            "train_inst_fn" : "1_instances_path_train.txt",
+            "test_inst_fn": "1_instances_path_test.txt",
+            "algo_runs_timelimit" : 60
         })
-        return scenario
 

@@ -119,7 +119,7 @@ class SCIP:
         :param compress_log: set True if you want a compressed log; useful for big files
         :param q: set to true if you want the output to not appear on the sdout
         '''
-        F = open(filename, "w+")
+        F = open(filename, "w")
         for param in D.keys():
             F.write(param + "=" + str(D[param]) + "\n")
         if timelimit > 0:
@@ -148,22 +148,26 @@ def run_SCIP_with_smac(config, budget, instance, seed=42):
 
     '''
     from SMAC.scenario import SMACscenario
-
-    smacscenario = SMACscenario()
-    smacscenario.set_configSpace()
+    output_folder = sys.argv[1]
+    smacscenario = SMACscenario(output_folder)
     configspace = smacscenario.get_configSpace()
     scip = SCIP()
-
     # Trying to generate the config with a sample
     sample_cfgs = configspace.sample_configuration()  # this creates a configuration type object
     sample_cfgs_dict = {k: sample_cfgs[k] for k in sample_cfgs}  # you can turn this object into a dictionary
 
-    scip.write_parameter_file(sample_cfgs_dict, filename=instance + "_SMAC.set", timelimit=300)
-    scip.run(instance, logfile=instance + ".log", parameter_configuration="{}_SMAC.set".format(instance), seed=seed,
+    #Creating a separated folder for each run
+
+    path_to_run_folder= "./SMAC3_output/" + output_folder + "/"
+    instance_file_name = instance.split("/")[-1]
+    instance_new = path_to_run_folder  + instance_file_name
+    scip.write_parameter_file(sample_cfgs_dict, filename=instance_new + "_SMAC.set", timelimit=10)
+    scip.run(instance, logfile=instance_new + ".log", parameter_configuration="{}_SMAC.set".format(instance_new), seed=seed,
              q=False)
-    l = Log(instance + ".log.gz").get_primal_dual_integral()[1]
-    os.remove("{}_SMAC.set".format(instance))
-    os.remove(instance + ".log.gz")
+
+    l = Log(instance_new + ".log.gz").get_primal_dual_integral()[1]
+    os.remove("{}_SMAC.set".format(instance_new))
+    os.remove(instance_new + ".log.gz")
     return l
 
 

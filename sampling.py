@@ -61,28 +61,25 @@ if __name__ == "__main__":
     # Parser
     ##################
     parser = argparse.ArgumentParser()
-    parser.add_argument("-d", metavar='d', help="Name of the directory with the log files under study")
     parser.add_argument("-s", metavar='s', help="Sample size you want to extract (Train size + Test size)", type=int)
     parser.add_argument("-r", metavar='r', help="Percentage of test set on total sample dimension", type=float)
     parser.add_argument("-p", metavar='p', help="Problem name: one among item_placement, load_balancing, anonymous", type=str, default="item_placement")
-    parser.add_argument("-hm", metavar='hm', help="Measure of hardness to be collected and to cluster on", default="Primal-Dual Integral Percentage")
+    parser.add_argument("-k", metavar='k', help="Number of cluster in the kMeans", type=int)
     args = parser.parse_args()
-    directory = args.d
-    try:
-        # Basic check of the passed directory name
-        assert directory[-1] in ["/", "\\"]
-    except:
-        raise ValueError("Directory path should end with / or \\")
+
 
 
     # Store the name of the instance family in a variable
     family = args.p
-    hm = args.hm
     sample_size = args.s
     train_test_percentage = args.r
+    k = args.k
 
     # Associate dataset name to a number
-    num_dataset = {'item_placement': "1"}
+    num_dataset = {'item_placement': "1", "load_balancing" : "2", "anonymous" : "3"}
+
+    # Retrieve the directory
+    directory = "./logs_" + family + "/"
 
     ######################################
     # Collect one score for each instance
@@ -95,6 +92,8 @@ if __name__ == "__main__":
     for file in files:
         # Split the name of the file, retrieve the number
         numb = file.split("_")[2]
+        if family == "anonymous":
+            numb = file.split("_")[1]
         # Verify wether the instance is in the folder
         if "{}_{}_3.log.gz".format(family, numb) in files:
             # If the number is not in the list name, collect the associated score
@@ -103,7 +102,7 @@ if __name__ == "__main__":
                 cont = 0
                 for seed in [3, 4, 5]:
                     try:
-                        score_this = Log(directory + "item_placement_{}_{}.log.gz".format(numb, seed)).parse()[hm]
+                        score_this = Log(directory + "{}_{}_{}.log.gz".format(family, numb, seed)).get_primal_dual_integral()[1]
                         if score_this != float('inf'):
                             cont += 1
                             score += score_this
@@ -117,7 +116,7 @@ if __name__ == "__main__":
     #############
     # KMeans
     #############
-    kmeans = KMeans(n_clusters=3, random_state=10).fit(np.asarray(scores).reshape(-1, 1))
+    kmeans = KMeans(n_clusters=k, random_state=10).fit(np.asarray(scores).reshape(-1, 1))
     y_cluster = kmeans.labels_
 
     counter_classes = Counter(y_cluster)

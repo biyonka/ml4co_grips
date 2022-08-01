@@ -14,3 +14,4 @@ dependencies:
     - hyperopt
     - scikit-learn
     - smac
+    - gurobipy

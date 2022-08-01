@@ -10,6 +10,7 @@ dependencies:
   - scipy
   - pip
   - matplotlib
+  - pandas
   - pip:
     - hyperopt
     - scikit-learn

@@ -3,10 +3,8 @@ Parse a SCIP log file and returns statistics
 @author A. Mélissa, B. Liang, E. Vercesi, A. Zhang
 '''
 import gzip
-import os
 import re
 import subprocess
-import sys
 
 
 class Log:
@@ -19,7 +17,7 @@ class Log:
         :return: list of lines of the log file
         '''
         if ".gz" in self.path[-3:]:
-            F = gzip.open(self.path, 'rt')
+            F =  gzip.open(self.path, 'rt')
         else:
             F = open(self.path, 'r')
         lines = F.readlines()
@@ -44,12 +42,9 @@ class Log:
 
     def get_running_time_first_feasible(self):
         lines = self.vectorise()
-        try: 
-            line = filter(lambda x: "First Solution" in x, lines)
-            time = next(line).split("seconds")[0].split(",")[-1]
-            return float(time)
-        except:
-            return sys.float_info.max
+        line = filter(lambda x: "First Solution" in x, lines)
+        time = next(line).split("seconds")[0].split(",")[-1]
+        return float(time)
 
     def get_primal_bound(self):
         lines = self.vectorise()
@@ -69,27 +64,6 @@ class Log:
         bb_nodes = next(line).split(":")[1].split("(")[0]
         return int(bb_nodes)
 
-    def get_root_node_solving_time(self):
-        lines = self.vectorise()
-        try:
-            line = filter(lambda x: "First LP Time" in x, lines)
-            root_node_time = next(line).split(":")[-1].strip()
-            return float(root_node_time)
-        except:
-            return sys.float_info.max
-
-    def get_LP_iter_freq(self):
-        lines = self.vectorise()
-        line = filter(lambda x: "dual LP" in x, lines)
-        freq = next(line).split(":")[1].split()[2]
-        return int(freq)
-
-    def get_time(self):
-        lines = self.vectorise()
-        line = filter(lambda  x : "Total Time" in x, lines)
-        time = next(line).split(":")[1].strip()
-        return float(time)
-
     def parse(self):
         return {
             "Primal-Dual Integral Value": self.get_primal_dual_integral()[0],
@@ -98,12 +72,8 @@ class Log:
             "Time First Feasible": self.get_running_time_first_feasible(),
             "Primal Bound": self.get_primal_bound(),
             "Dual Bound": self.get_dual_bound(),
-            "B&B Tree nodes": self.get_number_of_bb_nodes(),
-            "Time to Solve Root Node": self.get_root_node_solving_time(),
-            "Number of LP Iterations": self.get_LP_iter_freq(),
-            "Total Time" : self.get_time()
+            "B&B Tree nodes": self.get_number_of_bb_nodes()
         }
-
 
 class SCIP:
     def __init__(self):
@@ -119,7 +89,7 @@ class SCIP:
         :param compress_log: set True if you want a compressed log; useful for big files
         :param q: set to true if you want the output to not appear on the sdout
         '''
-        F = open(filename, "w")
+        F = open(filename, "w+")
         for param in D.keys():
             F.write(param + "=" + str(D[param]) + "\n")
         if timelimit > 0:
@@ -131,12 +101,13 @@ class SCIP:
             "scip -l {} {} -s {} {} -f {}".format(
                 logfile, "-q" if q else "", parameter_configuration, "-r " + str(seed) if seed > 0 else "", path
             ),
-            shell=True)
+        shell = True)
         if compress_log:
             subprocess.run("gzip --force {}".format(logfile), shell=True)
 
 
 def run_SCIP_with_smac(config, budget, instance, seed=42):
+
     '''
 
     # Method to define SCIP as TAE (target algorithm evaluator) ie model for SMAC
@@ -148,34 +119,34 @@ def run_SCIP_with_smac(config, budget, instance, seed=42):
 
     '''
     from SMAC.scenario import SMACscenario
-    output_folder = sys.argv[1]
-    smacscenario = SMACscenario(output_folder)
+
+    smacscenario = SMACscenario()
+    smacscenario.set_configSpace()
     configspace = smacscenario.get_configSpace()
     scip = SCIP()
+
     # Trying to generate the config with a sample
-    sample_cfgs = configspace.sample_configuration()  # this creates a configuration type object
+    sample_cfgs =configspace.sample_configuration()  # this creates a configuration type object
     sample_cfgs_dict = {k: sample_cfgs[k] for k in sample_cfgs}  # you can turn this object into a dictionary
 
-    #Creating a separated folder for each run
+    scip.write_parameter_file(sample_cfgs_dict, filename=instance+"_SMAC.set", timelimit=180)
+    scip.run(instance, logfile=instance + ".log", parameter_configuration="{}_SMAC.set".format(instance), seed=seed, q=False)
+    l = Log(instance + ".log.gz").parse()
+    return l["Primal-Dual Integral Percentage"]
 
-    path_to_run_folder= "./SMAC3_output/" + output_folder + "/"
-    instance_file_name = instance.split("/")[-1]
-    instance_new = path_to_run_folder  + instance_file_name
-    scip.write_parameter_file(sample_cfgs_dict, filename=instance_new + "_SMAC.set", timelimit=180)
-    scip.run(instance, logfile=instance_new + ".log", parameter_configuration="{}_SMAC.set".format(instance_new), seed=seed,
-             q=False)
-
-    l = Log(instance_new + ".log.gz").get_primal_dual_integral()[1]
-    os.remove("{}_SMAC.set".format(instance_new))
-    os.remove(instance_new + ".log.gz")
-    return l
-
+def run_SCIP_with_optano(instance, params, seed=42):
+    scip = SCIP()
+    scip.write_parameter_file(params, filename=instance+"_OPTANO.set", timelimit=180)
+    scip.run(instance, logfile=instance + ".log", parameter_configuration="{}_OPTANO.set".format(instance), seed=seed, q=False)
+    l = Log(instance + ".log.gz").parse()
+    print("######### PID : ",l["Primal-Dual Integral Percentage"])
+    return l["Primal-Dual Integral Percentage"]
 
 if __name__ == "__main__":
     # Testing section
     pass
-    # path = "./logs_example/item_placement_0.mps.gz.log"
-    # path = "./logs_example/item_placement_908.log.gz"
-    # l = Log(path)
-    # features = l.parse()
-    # SCIP().run("hb/instances/item_placement_0.mps.gz", parameter_configuration="scip.set", q=False)
+    #path = "./logs_example/item_placement_0.mps.gz.log"
+    #path = "./logs_example/item_placement_908.log.gz"
+    #l = Log(path)
+    #features = l.parse()
+    #SCIP().run("hb/instances/item_placement_0.mps.gz", parameter_configuration="scip.set", q=False)

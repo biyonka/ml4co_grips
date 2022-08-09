@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Tuneable parameters for SCIP -->
+<node xsi:type="and" xsi:noNamespaceSchemaLocation="params.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+
+    <node xsi:type="value" id="branching/scorefunc">
+        <domain xsi:type="categorical" strings='s p q'  defaultIndexOrValue='2'/>
+    </node>
+
+    <node xsi:type="value" id="branching/scorefac">
+        <domain xsi:type="continuous" start='0' end='1' defaultIndexOrValue='0.167'/>
+    </node>
+
+    <node xsi:type="value" id="branching/preferbinary">
+        <domain xsi:type="categorical" booleans='true false'  defaultIndexOrValue='1'/>
+    </node>
+
+    <node xsi:type="value" id="branching/clamp">
+        <domain xsi:type="continuous" start='0' end='0.5' defaultIndexOrValue='0.2'/>
+    </node>
+
+    <node xsi:type="value" id="branching/midpull">
+        <domain xsi:type="continuous" start='0' end='1' defaultIndexOrValue='0.75'/>
+    </node>
+
+    <node xsi:type="value" id="branching/midpullreldomtrig">
+        <domain xsi:type="continuous" start='0' end='1' defaultIndexOrValue='0.5'/>
+    </node>
+
+    <node xsi:type="value" id="branching/lpgainnormalize">
+        <domain xsi:type="categorical" strings='d l s'  defaultIndexOrValue='2'/>
+    </node>
+
+     <node xsi:type="value" id="lp/pricing">
+        <domain xsi:type="categorical" strings='l a f p s q d'  defaultIndexOrValue='0'/>
+    </node>
+
+    <node xsi:type="value" id="lp/colagelimit">
+        <domain xsi:type="discrete" start='-1' end='2147483647' defaultIndexOrValue='10'/>
+    </node>
+
+    <node xsi:type="value" id="lp/rowagelimit">
+        <domain xsi:type="discrete" start='-1' end='2147483647' defaultIndexOrValue='10'/>
+    </node>
+
+    <node xsi:type="value" id="nodeselection/childsel">
+        <domain xsi:type="categorical" strings='d u p i l r h'  defaultIndexOrValue='6'/>
+    </node>
+
+    <node xsi:type="value" id="separating/minortho">
+        <domain xsi:type="continuous" start='0' end='1' defaultIndexOrValue='0.9'/>
+    </node>
+
+     <node xsi:type="value" id="separating/minorthoroot">
+        <domain xsi:type="continuous" start='0' end='1' defaultIndexOrValue='0.9'/>
+    </node>
+
+    <node xsi:type="value" id="separating/maxcuts">
+        <domain xsi:type="discrete" start='0' end='2147483647' defaultIndexOrValue='100'/>
+    </node>
+
+    <node xsi:type="value" id="separating/maxcutsroot">
+        <domain xsi:type="discrete" start='0' end='2147483647' defaultIndexOrValue='2000'/>
+    </node>
+
+    <node xsi:type="value" id="separating/maxroundsroot">
+        <domain xsi:type="discrete" start='-1' end='2147483647' defaultIndexOrValue='-1'/>
+    </node>
+
+    <node xsi:type="value" id="separating/minefficacyroot">
+        <domain xsi:type="continuous" start='0' end='1e+98' defaultIndexOrValue='0.0001'/>
+    </node>
+
+    <node xsi:type="value" id="separating/cutagelimit">
+        <domain xsi:type="discrete" start='-1' end='2147483647' defaultIndexOrValue='80'/>
+    </node>
+
+    <node xsi:type="value" id="separating/poolfreq">
+        <domain xsi:type="discrete" start='-1' end='65534' defaultIndexOrValue='10'/>
+    </node>
+
+    <node xsi:type="value" id="presolving/maxrounds">
+        <domain xsi:type="discrete" start='-1' end='2147483647' defaultIndexOrValue='-1'/>
+    </node>
+
+    <node xsi:type="value" id="presolving/abortfac">
+        <domain xsi:type="continuous" start='0' end='1' defaultIndexOrValue='0.0008'/>
+    </node>
+
+<!--    <node xsi:type="value" id="limits/time">-->
+<!--        <domain xsi:type="continuous" start="180" end="180" defaultIndexOrValue="180"/>-->
+<!--    </node>-->
+</node>

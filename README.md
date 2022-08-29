@@ -2,7 +2,7 @@
 
 ## [GRIPS 2022](http://www.ipam.ucla.edu/programs/student-research-programs/graduate-level-research-in-industrial-projects-for-students-grips-berlin-2022/?tab=partner)
 
-### Students: M. AIDLI, B. Liang, [E. Vercesi](https://sites.google.com/universitadipavia.it/eleonoravercesi/home), A.Zhang 
+### Students: M. AIDLI, B. Liang, [E. Vercesi](https://sites.google.com/universitadipavia.it/eleonoravercesi/home), A. Zhang 
 
 ## Instruction
 This repository contains basic script to asses the performances of Hyperband, SMAC and GGA
@@ -53,3 +53,4 @@ To extract feature from a bunch of instances you can use the script `get_instanc
 
 ### Contacts
 Eleonora Vercesi : eleonora.vercesi01@universitadipavia.it
+Annie Zhang : annie.zhang@uvm.edu

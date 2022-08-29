@@ -53,4 +53,5 @@ To extract feature from a bunch of instances you can use the script `get_instanc
 
 ### Contacts
 Eleonora Vercesi : eleonora.vercesi01@universitadipavia.it
+
 Annie Zhang : annie.zhang@uvm.edu
